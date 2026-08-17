@@ -99,7 +99,7 @@ do
   vim.g.maplocalleader = ' '
 
   -- Set to true if you have a Nerd Font installed and selected in the terminal
-  vim.g.have_nerd_font = false
+  vim.g.have_nerd_font = true
 
   -- [[ Setting options ]]
   --  See `:help vim.o`
@@ -165,7 +165,7 @@ do
   vim.o.cursorline = true
 
   -- Minimal number of screen lines to keep above and below the cursor.
-  vim.o.scrolloff = 10
+  vim.o.scrolloff = 15
 
   -- if performing an operation that would fail due to unsaved changes in the buffer (like `:q`),
   -- instead raise a dialog asking if you wish to save the current file(s)
@@ -184,6 +184,12 @@ do
   -- Clear highlights on search when pressing <Esc> in normal mode
   --  See `:help hlsearch`
   vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
+
+  -- Reload the current Neovim configuration
+  vim.keymap.set('n', '<leader>rc', function()
+    vim.cmd.source(vim.env.MYVIMRC)
+    vim.notify 'Neovim config reloaded'
+  end, { desc = '[R]eload [C]onfig' })
 
   -- Diagnostic Config & Keymaps
   --  See `:help vim.diagnostic.Opts`
@@ -369,6 +375,7 @@ do
     icons = { mappings = vim.g.have_nerd_font },
     -- Document existing key chains
     spec = {
+      { '<leader>r', group = '[R]eload' },
       { '<leader>s', group = '[S]earch', mode = { 'n', 'v' } },
       { '<leader>t', group = '[T]oggle' },
       { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } }, -- Enable gitsigns recommended keymaps first
@@ -385,7 +392,9 @@ do
   vim.pack.add { gh 'folke/tokyonight.nvim' }
   ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
+    transparent = true,
     styles = {
+      sidebars = 'transparent',
       comments = { italic = false }, -- Disable italics in comments
     },
   }
@@ -695,7 +704,7 @@ do
     -- clangd = {},
     -- gopls = {},
     -- pyright = {},
-    -- rust_analyzer = {},
+    rust_analyzer = {},
     --
     -- Some languages (like typescript) have entire language plugins that can be useful:
     --    https://github.com/pmizio/typescript-tools.nvim
@@ -782,8 +791,10 @@ do
     format_on_save = function(bufnr)
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
-        -- lua = true,
-        -- python = true,
+        lua = true,
+        python = true,
+        markdown = true,
+        rust = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -796,9 +807,10 @@ do
     },
     -- You can also specify external formatters in here.
     formatters_by_ft = {
-      -- rust = { 'rustfmt' },
+      rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
-      -- python = { "isort", "black" },
+      python = { 'isort', 'black' },
+      markdown = { 'markdownlint' },
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -879,11 +891,10 @@ do
     -- Blink.cmp includes an optional, recommended rust fuzzy matcher,
     -- which automatically downloads a prebuilt binary when enabled.
     --
-    -- By default, we use the Lua implementation instead, but you may enable
-    -- the rust implementation via `'prefer_rust_with_warning'`
+    -- Use the native Rust implementation for better matching and performance.
     --
     -- See `:help blink-cmp-config-fuzzy` for more information
-    fuzzy = { implementation = 'lua' },
+    fuzzy = { implementation = 'rust' },
 
     -- Shows a signature help window while you type arguments for a function
     signature = { enabled = true },
@@ -966,12 +977,12 @@ do
   --  Here are some example plugins that I've included in the Kickstart repository.
   --  Uncomment any of the lines below to enable them (you will need to restart nvim).
   --
-  -- require 'kickstart.plugins.debug'
-  -- require 'kickstart.plugins.indent_line'
-  -- require 'kickstart.plugins.lint'
-  -- require 'kickstart.plugins.autopairs'
-  -- require 'kickstart.plugins.neo-tree'
-  -- require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
+  require 'kickstart.plugins.debug'
+  require 'kickstart.plugins.indent_line'
+  require 'kickstart.plugins.lint'
+  require 'kickstart.plugins.autopairs'
+  require 'kickstart.plugins.neo-tree'
+  require 'kickstart.plugins.gitsigns' -- adds gitsigns recommended keymaps
 
   -- NOTE: You can add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
   --
