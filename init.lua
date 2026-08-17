@@ -98,6 +98,12 @@ do
   vim.g.mapleader = ' '
   vim.g.maplocalleader = ' '
 
+  -- When Neovim is launched with a directory, use it as the working directory.
+  -- This keeps Neo-tree and project-wide Telescope searches on the same root.
+  if vim.fn.argc() == 1 and vim.fn.isdirectory(vim.fn.argv(0)) == 1 then
+    vim.cmd.cd(vim.fn.fnameescape(vim.fn.fnamemodify(vim.fn.argv(0), ':p')))
+  end
+
   -- Set to true if you have a Nerd Font installed and selected in the terminal
   vim.g.have_nerd_font = true
 
@@ -389,6 +395,8 @@ do
   -- change the command under that to load whatever the name of that colorscheme is.
   --
   -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+  -- Noctalia's generated matugen.lua calls base16-colorscheme.setup() to apply wallpaper colors.
+  vim.pack.add { gh 'RRethy/base16-nvim' }
   vim.pack.add { gh 'folke/tokyonight.nvim' }
   ---@diagnostic disable-next-line: missing-fields
   require('tokyonight').setup {
@@ -992,3 +1000,6 @@ end
 
 -- The line beneath this is called `modeline`. See `:help modeline`
 -- vim: ts=2 sts=2 sw=2 et
+
+local ok, matugen = pcall(require, 'matugen')
+if ok then matugen.setup() end

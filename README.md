@@ -1,5 +1,11 @@
 # kickstart.nvim
 
+> Nathan's personal Kickstart-based configuration. It includes directory-rooted
+> project search, cursor-only indentation scopes, and wallpaper-derived Noctalia
+> colors. The reusable theme source lives in
+> `extras/noctalia/matugen-template.lua`; the generated `lua/matugen.lua` is
+> intentionally not committed because it changes with the active wallpaper.
+
 ## Introduction
 
 A starting point for Neovim that is:
